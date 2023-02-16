@@ -108,6 +108,8 @@ void writeNetworkAddress() {
 // Read out the currently set network address to the device controller
 void readNetworkAddress() {
   
+  uint8_t output = 0;   // would it be faster if this were a global??
+
   switch (op_state) {
 
     case 1:     // if we finished reading in the opcode, prepare to send data
@@ -120,7 +122,7 @@ void readNetworkAddress() {
 
     case 2:     // write data to output on every clock pulse
 
-      uint8_t output = bit_buff | 0x01;
+      output = bit_buff | 0x01;
       if (output) {
         setPinHigh(CTR_DATA);
       } else {
