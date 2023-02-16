@@ -1,8 +1,8 @@
 import RPi.GPIO as GPIO
 import time
 
-CTR_CLK = 0
-CTR_DATA = 0
+CTR_CLK = 14
+CTR_DATA = 15
 CLOCK_DELAY = 1 # minimum time to wait in between clock pulses in seconds
 
 
@@ -12,12 +12,12 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(pinout, GPIO.OUT)
 
 
-clock_state = False
+# clock_state = False
 def toggle_clock():
 
     print("Pulsing clock!")
 
-    if clock_state == False:
+    if (GPIO.input(CTR_CLK) == False):
         GPIO.output(CTR_CLK, True)
         clock_state = True
     else:
@@ -45,7 +45,7 @@ def send_bit(state):
 
 
 # returns bits as booleans true/false
-def read_bit():
+def read_bit() -> bool:
 
     GPIO.setup(CTR_DATA, GPIO.IN)
     data = GPIO.input(CTR_DATA)
