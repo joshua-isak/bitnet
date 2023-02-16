@@ -14,6 +14,7 @@ GPIO.setup(pinout, GPIO.OUT)
 
 clock_state = False
 def toggle_clock():
+
     print("Pulsing clock!")
 
     if clock_state == False:
@@ -29,6 +30,7 @@ def toggle_clock():
 
 # This is slow, we probably don't need to change the pin state each time (but it easy!!)
 def send_bit(state):
+
     if (state == 1):
         state = True
     if (state == 0):
@@ -41,12 +43,18 @@ def send_bit(state):
     toggle_clock()
 
 
+
 # returns bits as booleans true/false
 def read_bit():
+
     GPIO.setup(CTR_DATA, GPIO.IN)
     data = GPIO.input(CTR_DATA)
+    print("Read in bit ({})!".format(data))
+
+    toggle_clock()
 
     return data
+
 
 
 def write_network_address(net_addr):
@@ -67,7 +75,7 @@ def write_network_address(net_addr):
         send_bit(output)
         bits_left -= 1
 
-    print("Reading sanity bit...")
+    print("Checking sanity bit...")
 
     if read_bit():
         print("sanity ok!")
@@ -77,8 +85,13 @@ def write_network_address(net_addr):
 
 
 
-
-
 def read_network_address():
-    pass
+
+    print("Sending initial start bit (1)...")
+    send_bit(1)
+
+    print("Sending opcode 1 (001)...")
+    send_bit(0)
+    send_bit(0)
+    send_bit(1)
 
