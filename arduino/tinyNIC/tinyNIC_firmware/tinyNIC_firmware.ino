@@ -124,7 +124,7 @@ void readNetworkAddress() {
 
     case 2:     // write data to output on every clock pulse
 
-      output = bit_buff | 0x01;
+      output = bit_buff & 0x01;
       if (output) {
         setPinHigh(CTR_DATA);
       } else {
