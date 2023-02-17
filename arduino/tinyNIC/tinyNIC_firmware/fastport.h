@@ -19,6 +19,6 @@ void setPinLow(uint8_t port) {
   PORTB &= ~(1 << port);	
 }
 
-uint8_t readPin(uint8_t port) {
-  return 1; //TODO FINISH THIS AHHHHHHHHH
+bool readPin(uint8_t port) {
+  return PINB & (1 << port);
 }

@@ -42,6 +42,8 @@ void onControllerClock() {
     if(opcode & 0x08) {
       opcode = opcode & 0x07;   // strip 4th bit to allow for true opcode value in memory
       op_state = 1;
+    } else {
+      return;
     }
   }
 
@@ -208,7 +210,7 @@ void setup() {
   // Enable and set relevant interrupts
   GIMSK |= (1 << PCIF);     // enable pin change interrupt flag (PCIF) in general interrupt mask register (GIMSK)
   PCMSK |= (1 << PCINT3);   // enable PCINT3 (pin 2) / CTR_CLK
-  PCMSK |= (1 << PCINT2);   // enable PCINT2 (pin 7) / NET_CLK
+  //PCMSK |= (1 << PCINT2);   // enable PCINT2 (pin 7) / NET_CLK
 
   sei();    // enable the ability for interrupts to trigger
 
