@@ -3,7 +3,7 @@ import time
 
 CTR_CLK = 14
 CTR_DATA = 15
-CLOCK_DELAY = 0.1 # minimum time to wait in between clock pulses in seconds
+CLOCK_DELAY = 0.00001 # minimum time to wait in between clock pulses in seconds
 
 
 pinout = (CTR_DATA, CTR_CLK)
@@ -22,9 +22,15 @@ def toggle_clock():
     else:
         GPIO.output(CTR_CLK, False)
 
-    time.sleep(CLOCK_DELAY)
+    #time.sleep(CLOCK_DELAY)
 
 
+def set_output():
+    GPIO.setup(CTR_DATA, GPIO.OUT)
+
+
+def set_input():
+    GPIO.setup(CTR_DATA, GPIO.IN)
 
 # This is slow, we probably don't need to change the pin state each time (but it easy!!)
 def send_bit(state):
@@ -36,7 +42,7 @@ def send_bit(state):
 
     #print("Sending bit ({})!".format(state))
 
-    GPIO.setup(CTR_DATA, GPIO.OUT)
+    # GPIO.setup(CTR_DATA, GPIO.OUT)
     GPIO.output(CTR_DATA, state)
     toggle_clock()
 
@@ -45,7 +51,7 @@ def send_bit(state):
 # returns bits as booleans true/false
 def read_bit() -> bool:
 
-    GPIO.setup(CTR_DATA, GPIO.IN)
+    # GPIO.setup(CTR_DATA, GPIO.IN)
     data = GPIO.input(CTR_DATA)
     #print("Read in bit ({})!".format(data))
 
@@ -58,6 +64,7 @@ def read_bit() -> bool:
 def write_network_address(net_addr):
 
     #print("Sending initial start bit (1)...")
+
     send_bit(1)
 
     #print("Sending opcode 0 (000)...")
@@ -73,8 +80,12 @@ def write_network_address(net_addr):
         send_bit(output)
         bits_left -= 1
 
+    set_input()
+
     #print("Checking sanity bit...")
     sanity = read_bit()
+
+    set_output()
 
     # if sanity:
     #     print("sanity ok!")
@@ -94,6 +105,8 @@ def read_network_address():
     send_bit(0)
     send_bit(1)
 
+    set_input()
+
     #print("Reading current 8 bit network address...")
     bits_left = 8
     net_addr = 0
@@ -112,6 +125,8 @@ def read_network_address():
     #     print("sanity ok!")
     # else:
     #     print("sanity check failed :(")
+
+    set_output()
 
     return net_addr
 
@@ -134,28 +149,20 @@ time.sleep(1)
 # advanced speed testing
 
 print("-----------------------")
-print("testing 255 read/writes (opcodes 0 & 1)")
+print("testing 255 x 10 read/writes (opcodes 0 & 1)")
 
 start = time.time()
 
 i = 0
 x = 0
 address = 0
-CLOCK_DELAY = 0.00001
 bits_moved = 0
-while x < 10:
+while (x < 10):
     while (i < 255):
-        #print("-----------------------")
-        #print("iteration {}".format(i))
-        #print("writing network address: {}".format(address))
         write_network_address(address)
-        #print("reading address...")
         result = read_network_address()
 
-        if (address == result):
-            pass
-            #print("addresses match! (OK)")
-        else:
+        if (address != result):
             print("-----------------------")
             print("iteration {}".format(i))
             print("addresses do not match (FAIL)")
@@ -166,6 +173,8 @@ while x < 10:
         bits_moved += 26
 
     x += 1
+    address = 0
+    i = 0
 
 stop = time.time()
 time_elapsed = stop - start
@@ -176,3 +185,5 @@ print("statistics:")
 print("time taken:    {}".format(time_elapsed))
 print("bits moved:    {}".format(bits_moved))
 print("bitrate (bps): {}".format(bitrate))
+
+GPIO.output(CTR_DATA, False)
