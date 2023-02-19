@@ -139,29 +139,33 @@ print("testing 255 read/writes (opcodes 0 & 1)")
 start = time.time()
 
 i = 0
+x = 0
 address = 0
 CLOCK_DELAY = 0.00001
 bits_moved = 0
-while (i < 255):
-    #print("-----------------------")
-    #print("iteration {}".format(i))
-    #print("writing network address: {}".format(address))
-    write_network_address(address)
-    #print("reading address...")
-    result = read_network_address()
+while x < 10:
+    while (i < 255):
+        #print("-----------------------")
+        #print("iteration {}".format(i))
+        #print("writing network address: {}".format(address))
+        write_network_address(address)
+        #print("reading address...")
+        result = read_network_address()
 
-    if (address == result):
-        pass
-        #print("addresses match! (OK)")
-    else:
-        print("-----------------------")
-        print("iteration {}".format(i))
-        print("addresses do not match (FAIL)")
-        break
+        if (address == result):
+            pass
+            #print("addresses match! (OK)")
+        else:
+            print("-----------------------")
+            print("iteration {}".format(i))
+            print("addresses do not match (FAIL)")
+            break
 
-    i += 1
-    address += 1 # not to exceed 255!
-    bits_moved += 26
+        i += 1
+        address += 1 # not to exceed 255!
+        bits_moved += 26
+
+    x += 1
 
 stop = time.time()
 time_elapsed = stop - start
