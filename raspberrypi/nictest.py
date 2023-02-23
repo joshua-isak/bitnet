@@ -12,6 +12,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(pinout, GPIO.OUT)
 
 
+
 # clock_state = False
 def toggle_clock():
 
@@ -25,6 +26,22 @@ def toggle_clock():
     #time.sleep(CLOCK_DELAY)
 
 
+
+def flush():
+
+    GPIO.setup(CTR_DATA, GPIO.OUT)
+    GPIO.setup(CTR_CLK, GPIO.OUT)
+
+    GPIO.output(CTR_DATA, False)
+    GPIO.output(CTR_CLK, False)
+
+    i = 0
+    while i < 100:
+        toggle_clock()
+        i += 1
+
+
+
 def set_output():
     GPIO.setup(CTR_DATA, GPIO.OUT)
 
@@ -32,7 +49,8 @@ def set_output():
 def set_input():
     GPIO.setup(CTR_DATA, GPIO.IN)
 
-# This is slow, we probably don't need to change the pin state each time (but it easy!!)
+
+
 def send_bit(state):
 
     if (state):
@@ -132,6 +150,9 @@ def read_network_address():
 
 
 # testing
+
+flush()
+
 print("-----------------------")
 print("writing address 0x07...")
 time.sleep(1)
